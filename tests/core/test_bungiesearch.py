@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from elasticsearch_dsl import Q
 from six import iteritems
 
 import pytz
@@ -76,14 +77,14 @@ class CoreTestCase(TestCase):
         Check that the mapping is the expected one.
         '''
         expected_article = {'properties': {'updated': {'type': 'date', 'null_value': '2013-07-01'},
-                                           'description': {'type': 'string', 'boost': 1.35, 'analyzer': 'snowball'},
-                                           'text': {'type': 'string', 'analyzer': 'edge_ngram_analyzer'},
-                                           'text_field': {'type': 'string', 'analyzer': 'snowball'},
+                                           'description': {'type': 'text', 'boost': 1.35, 'analyzer': 'snowball'},
+                                           'text': {'type': 'text', 'analyzer': 'edge_ngram_analyzer'},
+                                           'text_field': {'type': 'text', 'analyzer': 'snowball'},
                                            'created': {'type': 'date'},
-                                           'title': {'type': 'string', 'boost': 1.75, 'analyzer': 'snowball'},
-                                           'authors': {'type': 'string', 'analyzer': 'snowball'},
-                                           'meta_data': {'type': 'string', 'analyzer': 'snowball'},
-                                           'link': {'type': 'string', 'analyzer': 'snowball'},
+                                           'title': {'type': 'text', 'boost': 1.75, 'analyzer': 'snowball'},
+                                           'authors': {'type': 'text', 'analyzer': 'snowball'},
+                                           'meta_data': {'type': 'text', 'analyzer': 'snowball'},
+                                           'link': {'type': 'text', 'analyzer': 'snowball'},
                                            'effective_date': {'type': 'date'},
                                            'tweet_count': {'type': 'integer'},
                                            'id': {'type': 'integer'},
@@ -91,13 +92,13 @@ class CoreTestCase(TestCase):
                                            'published': {'type': 'date'}}
                            }
         expected_user = {'properties': {'updated': {'type': 'date', 'null_value': '2013-07-01'},
-                                        'about': {'type': 'string', 'analyzer': 'edge_ngram_analyzer'},
+                                        'about': {'type': 'text', 'analyzer': 'edge_ngram_analyzer'},
                                         'int_about': {'type': 'integer'},
-                                        'user_id': {'analyzer': 'snowball', 'type': 'string'},
+                                        'user_id': {'analyzer': 'snowball', 'type': 'text'},
                                         'effective_date': {'type': 'date'},
                                         'created': {'type': 'date'},
-                                        'name': {'analyzer': 'snowball', 'type': 'string'},
-                                        '_id': {'analyzer': 'snowball', 'type': 'string'}}
+                                        'name': {'analyzer': 'snowball', 'type': 'text'},
+                                        '_id': {'analyzer': 'snowball', 'type': 'text'}}
                         }
 
         self.assertEqual(ArticleIndex().get_mapping(), expected_article)
@@ -387,7 +388,7 @@ class CoreTestCase(TestCase):
         self.assertEqual(NoUpdatedField.objects.search_index('bungiesearch_demo_bis').count(), 0, 'Indexed items on bungiesearch_demo_bis for NoUpdatedField is zero.')
 
     def test_None_as_missing(self):
-        missing = Article.objects.search_index('bungiesearch_demo').filter('missing', field='text_field')
+        missing = Article.objects.search_index('bungiesearch_demo').filter(~Q('exists', field='text_field'))
         self.assertEqual(len(missing), 1, 'Filtering by missing text_field does not return exactly one item.')
         self.assertEqual(missing[0].text_field, None, 'The item with missing text_field does not have text_field=None.')
 
