@@ -339,13 +339,13 @@ defined either in the model or in the ModelIndex subclass
 .. code:: python
 
     from core.models import Article
-    from bungiesearch.fields import DateField, StringField
+    from bungiesearch.fields import DateField, TextField
     from bungiesearch.indices import ModelIndex
 
 
     class ArticleIndex(ModelIndex):
         effectived_date = DateField(eval_as='obj.created if obj.created and obj.published > obj.created else obj.published')
-        meta_data = StringField(eval_as='" ".join([fld for fld in [obj.link, str(obj.tweet_count), obj.raw] if fld])')
+        meta_data = TextField(eval_as='" ".join([fld for fld in [obj.link, str(obj.tweet_count), obj.raw] if fld])')
 
         class Meta:
             model = Article
@@ -429,12 +429,12 @@ mandatory (cf. below).
 
 .. code:: python
 
-    from bungiesearch.fields import DateField, StringField
+    from bungiesearch.fields import DateField, TextField
     from bungiesearch.indices import ModelIndex
 
     class ArticleIndex(ModelIndex):
         effective_date = DateField(eval_as='obj.created if obj.created and obj.published > obj.created else obj.published')
-        meta_data = StringField(eval_as='" ".join([fld for fld in [obj.link, str(obj.tweet_count), obj.raw] if fld])')
+        meta_data = TextField(eval_as='" ".join([fld for fld in [obj.link, str(obj.tweet_count), obj.raw] if fld])')
 
 Here, both ``effective_date`` and ``meta_data`` will be part of the doc
 type mapping, but won't be reversed mapped since those fields do not
@@ -444,7 +444,7 @@ This can also be used to index foreign keys:
 
 .. code:: python
 
-    some_field_name = StringField(eval_as='",".join([item for item in obj.some_foreign_relation.values_list("some_field", flat=True)]) if obj.some_foreign_relation else ""')
+    some_field_name = TextField(eval_as='",".join([item for item in obj.some_foreign_relation.values_list("some_field", flat=True)]) if obj.some_foreign_relation else ""')
 
 Class methods
 ~~~~~~~~~~~~~

@@ -92,19 +92,27 @@ class AbstractField(object):
         return json
 
 # All the following definitions could probably be done with better polymorphism.
-class StringField(AbstractField):
-    coretype = 'text'
-    fields = ['doc_values', 'term_vector', 'norms', 'index_options', 'analyzer', 'index_analyzer', 'search_analyzer', 'include_in_all', 'ignore_above', 'position_offset_gap', 'fielddata', 'similarity']
-    defaults = {'analyzer': 'snowball'}
+class KeywordField(AbstractField):
+    coretype = 'keyword'
+    fields = ['doc_values', 'term_vector', 'norms', 'index_options', 'include_in_all', 'ignore_above', 'position_offset_gap', 'fielddata', 'similarity']
+    defaults = {}
 
     def value(self, obj):
-        val = super(StringField, self).value(obj)
+        val = super(KeywordField, self).value(obj)
         if val is None:
             return None
         return striptags(val)
 
     def __unicode__(self):
-        return 'StringField'
+        return 'KeywordField'
+
+class TextField(KeywordField):
+    coretype = 'text'
+    fields = ['doc_values', 'term_vector', 'norms', 'index_options', 'analyzer', 'index_analyzer', 'search_analyzer', 'include_in_all', 'ignore_above', 'position_offset_gap', 'fielddata', 'similarity']
+    defaults = {'analyzer': 'snowball'}
+
+    def __unicode__(self):
+        return 'TextField'
 
 class NumberField(AbstractField):
     coretype = ['float', 'double', 'byte', 'short', 'integer', 'long']
@@ -148,4 +156,4 @@ def django_field_to_index(field, **attr):
     elif dj_type in ('BigIntegerField'):
         return NumberField(coretype='long', **attr)
 
-    return StringField(**attr)
+    return TextField(**attr)
