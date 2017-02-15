@@ -324,18 +324,6 @@ class CoreTestCase(TestCase):
         match_zero = Article.objects.search.query('match', text='example')
         self.assertEqual(len(match_zero), 0, 'Searching for "article" in text did not return exactly zero items (got {})'.format(match_zero))
 
-    def test_fields(self):
-        '''
-        Checking that providing a specific field will correctly fetch these items from elasticsearch.
-        '''
-        for mdl, id_field in [(Article, 'id'), (User, 'user_id')]:
-            raw_items = mdl.objects.search.fields('_id')[:5:True]
-            self.assertTrue(all([dir(raw) == ['meta'] for raw in raw_items]), 'Requesting only _id returned more than just meta info from ES for model {}.'.format(mdl))
-            items = mdl.objects.search.fields('_id')[:5]
-            self.assertTrue(all([dbi in items for dbi in mdl.objects.all()]), 'Mapping after fields _id only search did not return all results for model {}.'.format(mdl))
-            items = mdl.objects.search.fields([id_field, '_id', '_source'])[:5]
-            self.assertTrue(all([dbi in items for dbi in mdl.objects.all()]), 'Mapping after fields _id, id and _source search did not return all results for model {}.'.format(mdl))
-
     def test_prepare_field(self):
         '''
         Check that providing a method to calculate the value of a field will yield correct results in the search index.
@@ -360,7 +348,7 @@ class CoreTestCase(TestCase):
         '''
         Test fun queries.
         '''
-        lazy = Article.objects.bsearch_title_search('title').only('pk').fields('_id')
+        lazy = Article.objects.bsearch_title_search('title').only('pk')
         print(len(lazy)) # Returns the total hits computed by elasticsearch.
         assert all([type(item) == Article for item in lazy.filter('range', effective_date={'lte': '2014-09-22'})[5:7]])
 
@@ -368,7 +356,7 @@ class CoreTestCase(TestCase):
         '''
         Test search meta is set.
         '''
-        lazy = Article.objects.bsearch_title_search('title').only('pk').fields('_id')
+        lazy = Article.objects.bsearch_title_search('title').only('pk')
         assert all([hasattr(item._searchmeta) for item in lazy.filter('range', effective_date={'lte': '2014-09-22'})[5:7]])
 
     def test_manangedbutempty(self):
