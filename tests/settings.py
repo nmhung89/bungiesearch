@@ -4,7 +4,7 @@ import sys
 DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'cookies_are_delicious_delicacies'
-ROOT_URLCONF = 'urls'
+# ROOT_URLCONF = 'urls'
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
