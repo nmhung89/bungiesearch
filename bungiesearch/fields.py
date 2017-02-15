@@ -155,5 +155,7 @@ def django_field_to_index(field, **attr):
         return NumberField(coretype='integer', **attr)
     elif dj_type in ('BigIntegerField'):
         return NumberField(coretype='long', **attr)
+    elif getattr(field, 'choices', None):
+        return KeywordField(**attr)
 
     return TextField(**attr)
