@@ -1,4 +1,5 @@
 from datetime import datetime
+from unittest import skip
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
@@ -297,6 +298,7 @@ class CoreTestCase(TestCase):
         update_index(Article.objects.all(), 'Article', start_date=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M'))
         update_index(NoUpdatedField.objects.all(), 'NoUpdatedField', end_date=datetime.strftime(datetime.now(), '%Y-%m-%d'))
 
+    @skip('Is it still a valid test?')
     def test_optimal_queries(self):
         db_item = NoUpdatedField.objects.get(pk=1)
         src_item = NoUpdatedField.objects.search.query('match', field_title='My title')[0]
