@@ -155,7 +155,7 @@ class ModelIndex(object):
                 continue
 
             attr = {'model_attr': f.name}
-            if f.has_default():
+            if f.has_default() and not callable(f.default):
                 attr['null_value'] = f.default
 
             if f.name in hotfixes:
