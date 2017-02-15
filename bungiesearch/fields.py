@@ -107,7 +107,7 @@ class AbstractField(object):
 
 # All the following definitions could probably be done with better polymorphism.
 class StringField(AbstractField):
-    coretype = 'string'
+    coretype = 'text'
     fields = ['doc_values', 'term_vector', 'norms', 'index_options', 'analyzer', 'index_analyzer', 'search_analyzer', 'include_in_all', 'ignore_above', 'position_offset_gap', 'fielddata', 'similarity']
     defaults = {'analyzer': 'snowball'}
 

@@ -7,7 +7,7 @@ CLUSTER_URL=http://127.0.0.1:9200
 ES_PATH=elasticsearch
 
 if [ ${TRAVIS} ]; then
-  ES_PATH=./elasticsearch-2.3.0/bin/elasticsearch
+  ES_PATH=./elasticsearch-5.2.0/bin/elasticsearch
 fi
 
 function has_command() {

@@ -1,6 +1,7 @@
 *.pyc
 *.egg
 
+/.idea/
 /venv
 /build/
 /dist/
