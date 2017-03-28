@@ -105,7 +105,7 @@ class Bungiesearch(Search):
         try:
             return cls._model_to_index[model] if via_class else cls._model_name_to_index[model]
         except KeyError:
-            raise KeyError('Could not find any index defined for model {}. Is the model in one of the model index modules of BUNGIESEARCH["INDICES"]?'.format(model))
+            raise KeyError('Could not find any index defined for model {0}. Is the model in one of the model index modules of BUNGIESEARCH["INDICES"]?'.format(model))
 
     @classmethod
     def get_model_index(cls, model, default=True):
@@ -119,7 +119,7 @@ class Bungiesearch(Search):
                 return cls._model_name_to_default_index[model]
             return cls._model_name_to_model_idx[model]
         except KeyError:
-            raise KeyError('Could not find any model index defined for model {}.'.format(model))
+            raise KeyError('Could not find any model index defined for model {0}.'.format(model))
 
     @classmethod
     def get_indices(cls):
@@ -138,7 +138,7 @@ class Bungiesearch(Search):
         try:
             return cls._index_to_model[index] if as_class else cls._idx_name_to_mdl_to_mdlidx[index].keys()
         except KeyError:
-            raise KeyError('Could not find any index named {}. Is this index defined in BUNGIESEARCH["INDICES"]?'.format(index))
+            raise KeyError('Could not find any index named {0}. Is this index defined in BUNGIESEARCH["INDICES"]?'.format(index))
 
     @classmethod
     def get_model_indices(cls, index):
@@ -149,7 +149,7 @@ class Bungiesearch(Search):
         try:
             return cls._idx_name_to_mdl_to_mdlidx[index].values()
         except KeyError:
-            raise KeyError('Could not find any index named {}. Is this index defined in BUNGIESEARCH["INDICES"]?'.format(index))
+            raise KeyError('Could not find any index named {0}. Is this index defined in BUNGIESEARCH["INDICES"]?'.format(index))
 
     @classmethod
     def map_raw_results(cls, raw_results, instance=None):
@@ -170,12 +170,12 @@ class Bungiesearch(Search):
         for pos, result in enumerate(raw_results):
             model_name = result.meta.doc_type
             if model_name not in Bungiesearch._model_name_to_index or result.meta.index not in Bungiesearch._model_name_to_index[model_name]:
-                logger.warning('Returned object of type {} ({}) is not defined in the settings, or is not associated to the same index as in the settings.'.format(model_name, result))
+                logger.warning('Returned object of type {0} ({1}) is not defined in the settings, or is not associated to the same index as in the settings.'.format(model_name, result))
                 results[pos] = result
             else:
                 meta = Bungiesearch.get_model_index(model_name).Meta
-                model_results['{}.{}'.format(result.meta.index, model_name)].append(result.meta.id)
-                found_results['{1.meta.index}.{0}.{1.meta.id}'.format(model_name, result)] = (pos, result.meta)
+                model_results['{0}.{1}'.format(result.meta.index, model_name)].append(result.meta.id)
+                found_results['{0}.{1}.{2}'.format(result.meta.index, model_name, result.meta.id)] = (pos, result.meta)
 
         # Now that we have model ids per model name, let's fetch everything at once.
         for ref_name, ids in iteritems(model_results):
@@ -203,7 +203,7 @@ class Bungiesearch(Search):
                     )
             # Let's reposition each item in the results and set the _searchmeta meta information.
             for item in items:
-                pos, meta = found_results['{}.{}.{}'.format(index_name, model_name, item.pk)]
+                pos, meta = found_results['{0}.{1}.{2}'.format(index_name, model_name, item.pk)]
                 item._searchmeta = meta
                 results[pos] = item
 
@@ -362,12 +362,12 @@ class Bungiesearch(Search):
         try:
             search_alias = self._alias_hooks[alias]
         except KeyError:
-            raise AttributeError('Could not find search alias named {}. Is this alias defined in BUNGIESEARCH["ALIASES"]?'.format(alias))
+            raise AttributeError('Could not find search alias named {0}. Is this alias defined in BUNGIESEARCH["ALIASES"]?'.format(alias))
         else:
             if search_alias._applicable_models and \
                 ((model_obj and model_obj not in search_alias._applicable_models) or \
                  not any([app_model_obj.__name__ in self._doc_type for app_model_obj in search_alias._applicable_models])):
-                    raise ValueError('Search alias {} is not applicable to model/doc_types {}.'.format(alias, model_obj if model_obj else self._doc_type))
+                    raise ValueError('Search alias {0} is not applicable to model/doc_types {1}.'.format(alias, model_obj if model_obj else self._doc_type))
             return search_alias.prepare(self, model_obj).alias_for
 
     def __getattr__(self, alias):

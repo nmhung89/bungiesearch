@@ -34,7 +34,7 @@ def update_index(model_items, model_name, action='index', bulk_size=100, num_doc
     if action == 'delete' and not hasattr(model_items, '__iter__'):
         raise ValueError("If action is 'delete', model_items must be an iterable of primary keys.")
 
-    logger.info('Getting index for model {}.'.format(model_name))
+    logger.info('Getting index for model {0}.'.format(model_name))
     for index_name in src.get_index(model_name):
         index_instance = src.get_model_index(model_name)
         model = index_instance.get_model()
@@ -49,13 +49,13 @@ def update_index(model_items, model_name, action='index', bulk_size=100, num_doc
                 if not model_items.ordered:
                     model_items = model_items.order_by('pk')
         else:
-            logger.warning('Limiting the number of model_items to {} to {}.'.format(action, num_docs))
+            logger.warning('Limiting the number of model_items to {0} to {1}.'.format(action, num_docs))
 
-        logger.info('{} {} documents on index {}'.format(action, num_docs, index_name))
+        logger.info('{0} {1} documents on index {2}'.format(action, num_docs, index_name))
         prev_step = 0
         max_docs = num_docs + bulk_size if num_docs > bulk_size else bulk_size + 1
         for next_step in range(bulk_size, max_docs, bulk_size):
-            logger.info('{}: documents {} to {} of {} total on index {}.'.format(action.capitalize(), prev_step, next_step, num_docs, index_name))
+            logger.info('{0}: documents {1} to {2} of {3} total on index {4}.'.format(action.capitalize(), prev_step, next_step, num_docs, index_name))
             data = create_indexed_document(index_instance, model_items[prev_step:next_step], action)
             bulk_index(src.get_es_instance(), data, index=index_name, doc_type=model.__name__, raise_on_error=True)
             prev_step = next_step
@@ -74,14 +74,14 @@ def delete_index_item(item, model_name, refresh=True):
     '''
     src = Bungiesearch()
 
-    logger.info('Getting index for model {}.'.format(model_name))
+    logger.info('Getting index for model {0}.'.format(model_name))
     for index_name in src.get_index(model_name):
         index_instance = src.get_model_index(model_name)
         item_es_id = index_instance.fields['_id'].value(item)
         try:
             src.get_es_instance().delete(index_name, model_name, item_es_id)
         except NotFoundError as e:
-            logger.warning('NotFoundError: could not delete {}.{} from index {}: {}.'.format(model_name, item_es_id, index_name, str(e)))
+            logger.warning('NotFoundError: could not delete {0}.{1} from index {2}: {3}.'.format(model_name, item_es_id, index_name, str(e)))
 
         if refresh:
             src.get_es_instance().indices.refresh(index=index_name)
@@ -106,12 +106,12 @@ def create_indexed_document(index_instance, model_items, action):
 def filter_model_items(index_instance, model_items, model_name, start_date, end_date):
     ''' Filters the model items queryset based on start and end date.'''
     if index_instance.updated_field is None:
-        logger.warning("No updated date field found for {} - not restricting with start and end date".format(model_name))
+        logger.warning("No updated date field found for {0} - not restricting with start and end date".format(model_name))
     else:
         if start_date:
-            model_items = model_items.filter(**{'{}__gte'.format(index_instance.updated_field): __str_to_tzdate__(start_date)})
+            model_items = model_items.filter(**{'{0}__gte'.format(index_instance.updated_field): __str_to_tzdate__(start_date)})
         if end_date:
-            model_items = model_items.filter(**{'{}__lte'.format(index_instance.updated_field): __str_to_tzdate__(end_date)})
+            model_items = model_items.filter(**{'{0}__lte'.format(index_instance.updated_field): __str_to_tzdate__(end_date)})
 
     return model_items
 

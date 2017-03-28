@@ -30,9 +30,9 @@ class AbstractField(object):
         '''
         if isinstance(self.coretype, list):
             if 'coretype' not in args:
-                raise KeyError('{} can be represented as one of the following types: {}. Specify which to select as the `coretype` parameter.'.format(unicode(self), ', '.join(self.coretype)))
+                raise KeyError('{0} can be represented as one of the following types: {1}. Specify which to select as the `coretype` parameter.'.format(unicode(self), ', '.join(self.coretype)))
             if args['coretype'] not in self.coretype:
-                raise KeyError('Core type {} is not supported by {}.'.format(args['coretype'], unicode(self)))
+                raise KeyError('Core type {0} is not supported by {1}.'.format(args['coretype'], unicode(self)))
             self.type = args.pop('coretype')
         else:
             self.type = self.coretype
@@ -43,7 +43,7 @@ class AbstractField(object):
 
         for attr, value in iteritems(args):
             if attr not in self.fields and attr not in AbstractField.common_fields:
-                raise KeyError('Attribute `{}` is not allowed for core type {}.'.format(attr, self.coretype))
+                raise KeyError('Attribute `{0}` is not allowed for core type {1}.'.format(attr, self.coretype))
             setattr(self, attr, value)
 
         for attr, value in iteritems(self.defaults):
@@ -63,7 +63,7 @@ class AbstractField(object):
             try:
                 return eval(self.eval_func)
             except Exception as e:
-                raise type(e)('Could not compute value of {} field (eval_as=`{}`): {}.'.format(unicode(self), self.eval_func, unicode(e)))
+                raise type(e)('Could not compute value of {0} field (eval_as=`{1}`): {2}.'.format(unicode(self), self.eval_func, unicode(e)))
 
         elif self.model_attr:
             if isinstance(obj, dict):

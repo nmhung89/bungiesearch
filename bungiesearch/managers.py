@@ -18,7 +18,7 @@ class BungiesearchManager(Manager):
     def search_index(self, index):
         from bungiesearch import Bungiesearch
         if index not in Bungiesearch.get_index(self.model, via_class=True):
-            logger.warning('Model/doctype {} is not present on index {}: search may return no results.'.format(self.model.__name__, index))
+            logger.warning('Model/doctype {0} is not present on index {1}: search may return no results.'.format(self.model.__name__, index))
         return Bungiesearch().index(index).doc_type(self.model.__name__)
 
     def custom_search(self, index, doc_type):
@@ -51,6 +51,6 @@ class BungiesearchManager(Manager):
         # Don't treat "private" attrs as possible aliases. This prevents an infinite recursion bug.
         # Similarly, if Bungiesearch is installed but not enabled, raise the expected error
         if alias[0] == '_' or not dj_settings.BUNGIESEARCH:
-            raise AttributeError("'{}' object has no attribute '{}'".format(type(self), alias))
+            raise AttributeError("'{0}' object has no attribute '{1}'".format(type(self), alias))
 
         return self.search.hook_alias(alias, self.model)

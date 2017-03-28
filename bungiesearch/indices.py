@@ -28,7 +28,7 @@ class ModelIndex(object):
         try:
             _meta = getattr(self, 'Meta')
         except AttributeError:
-            raise AttributeError('ModelIndex {} does not contain a Meta class.'.format(self.__class__.__name__))
+            raise AttributeError('ModelIndex {0} does not contain a Meta class.'.format(self.__class__.__name__))
 
         self.model = getattr(_meta, 'model', None)
         self.fields = {}
@@ -54,7 +54,7 @@ class ModelIndex(object):
                 continue
 
             if cls_attr in self.fields:
-                logger.info('Overwriting implicitly defined model field {} ({}) its explicit definition: {}.'.format(cls_attr, text_type(self.fields[cls_attr]), text_type(obj)))
+                logger.info('Overwriting implicitly defined model field {0} ({1}) its explicit definition: {2}.'.format(cls_attr, text_type(self.fields[cls_attr]), text_type(obj)))
             self.fields[cls_attr] = obj
 
         self.fields['_id'] = self.fields[id_field]
@@ -114,7 +114,7 @@ class ModelIndex(object):
                 # We're using `filter` followed by `values` in order to only fetch the required fields.
                 obj = self.model.objects.filter(pk=obj_pk).values(*self.fields_to_fetch)[0]
             except Exception as e:
-                raise ValueError('Could not find object of primary key = {} in model {} (model index class {}). (Original exception: {}.)'.format(obj_pk, self.model, self.__class__.__name__, e))
+                raise ValueError('Could not find object of primary key = {0} in model {1} (model index class {2}). (Original exception: {3}.)'.format(obj_pk, self.model, self.__class__.__name__, e))
 
         serialized_object = {}
 
@@ -166,4 +166,4 @@ class ModelIndex(object):
         return final_fields
 
     def __str__(self):
-        return '<{0.__class__.__name__}:{0.model.__name__}>'.format(self)
+        return '<{0}:{1}>'.format(self.__class__.__name__, self.model.__name__)

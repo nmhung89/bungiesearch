@@ -4,14 +4,14 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils import six
 
-from ._utils import add_arguments
+from ._utils import option_list
 
 
 class Command(BaseCommand):
     help = 'Clears the search index of its contents.'
-    add_arguments = add_arguments
+    option_list = option_list
 
-    def handle(self, **options):
+    def handle(self, *args, **options):
         if options.get('interactive', True):
             print('WARNING: This will irreparably remove EVERYTHING from your search index.')
             print('Your choices after this are to restore from backups or rebuild via the `rebuild_index` command.')

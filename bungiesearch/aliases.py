@@ -33,7 +33,7 @@ class SearchAlias(object):
         return s
 
     def alias_for(self, **kwargs):
-        raise NotImplementedError('{} does not provide an implementation for alias_for.'.format(self._classname))
+        raise NotImplementedError('{0} does not provide an implementation for alias_for.'.format(self._classname))
 
     def get_model(self):
         if self.model:
